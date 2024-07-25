@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Jobs\UpdateStatistics;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -10,9 +11,10 @@ class Kernel extends ConsoleKernel
     /**
      * Define the application's command schedule.
      */
-    protected function schedule(Schedule $schedule): void
+    protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        // Schedule the job to run daily
+        $schedule->job(UpdateStatistics::dispatch())->hourly();
     }
 
     /**

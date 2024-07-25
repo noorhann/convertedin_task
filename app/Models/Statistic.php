@@ -14,4 +14,10 @@ class Statistic extends Model
         'user_id',
         'task_count',
     ];
+
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

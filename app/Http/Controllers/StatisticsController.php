@@ -2,19 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use Illuminate\Http\Request;
+use App\Services\StatisticService;
+use App\Models\Statistic;
+
 
 class StatisticsController extends Controller
 {
+    protected $statisticService;
+
+    public function __construct(StatisticService $statisticService)
+    {
+        $this->statisticService = $statisticService;
+    }
+
     public function index()
     {
-        // Get top 10 users with the highest task count
-        $users = User::withCount('tasks')
-        ->orderBy('tasks_count', 'desc')
-        ->take(10)
-            ->get();
+        $statistics = $this->statisticService->getUsersHighestTaskCount();
 
-        return view('statistics.index', compact('users'));
+        return view('statistics.index', compact('statistics'));
     }
 }
