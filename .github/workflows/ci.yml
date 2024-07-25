@@ -1,6 +1,6 @@
 name: Run Tests
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   test:
@@ -12,7 +12,7 @@ jobs:
     - name: Set up PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.1' 
+        php-version: '8.1' # Adjust PHP version if needed
 
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress --no-suggest
@@ -23,11 +23,26 @@ jobs:
         sudo apt-get install -y mysql-server
         sudo service mysql start
 
-        # Create database and user without password
         mysql -e "CREATE DATABASE IF NOT EXISTS task_manager;"
-        mysql -e "CREATE USER IF NOT EXISTS 'root'@'localhost';"
-        mysql -e "GRANT ALL PRIVILEGES ON task_manager.* TO 'root'@'localhost';"
+        mysql -e "CREATE USER 'forge'@'localhost' IDENTIFIED BY 'password';"
+        mysql -e "GRANT ALL PRIVILEGES ON task_manager.* TO 'forge'@'localhost';"
         mysql -e "FLUSH PRIVILEGES;"
+
+    - name: Configure .env
+      run: |
+        cp .env.example .env
+        echo "DB_CONNECTION=mysql" >> .env
+        echo "DB_HOST=127.0.0.1" >> .env
+        echo "DB_PORT=3306" >> .env
+        echo "DB_DATABASE=task_manager" >> .env
+        echo "DB_USERNAME=forge" >> .env
+        echo "DB_PASSWORD=password" >> .env
+
+    - name: Check MySQL Status
+      run: sudo service mysql status
+
+    - name: Check MySQL Users
+      run: mysql -e "SELECT user, host FROM mysql.user;"
 
     - name: Run migrations
       env:
@@ -35,8 +50,8 @@ jobs:
         DB_HOST: 127.0.0.1
         DB_PORT: 3306
         DB_DATABASE: task_manager
-        DB_USERNAME: root
-        DB_PASSWORD: ''
+        DB_USERNAME: forge
+        DB_PASSWORD: password
       run: php artisan migrate --force
 
     - name: Run tests
@@ -45,6 +60,6 @@ jobs:
         DB_HOST: 127.0.0.1
         DB_PORT: 3306
         DB_DATABASE: task_manager
-        DB_USERNAME: root
-        DB_PASSWORD: ''
+        DB_USERNAME: forge
+        DB_PASSWORD: password
       run: php artisan test
