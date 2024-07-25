@@ -6,6 +6,7 @@ This is a Task Manager application built with Laravel. It allows users to manage
 
 
 ### Default Admin Credintials
-Email: admin@admin.com
-Password: password
+- Email: admin@admin.com
+
+- Password: password
 
