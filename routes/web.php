@@ -35,6 +35,6 @@ Route::middleware('auth:admin')->group(function () {
 
 });
 Route::get('/', function () {
-    return view('welcome');
-});
+    // This route will use the custom middleware
+})->middleware('redirectIfAuthenticated');
 
