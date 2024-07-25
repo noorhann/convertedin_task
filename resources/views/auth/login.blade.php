@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('title', 'Admin Login')
-@section('navbar-title', 'Login')
 
 @section('content')
 <div class="form-container">

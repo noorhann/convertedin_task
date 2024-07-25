@@ -16,14 +16,15 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-// Show login form and handle login
+
+
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('login', [AuthController::class, 'login'])->name('admin.login');
 
-// Logout
-Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
+Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware('auth:admin')->group(function () {
+    
 
     Route::get('/tasks/create', [TaskController::class, 'create'])->name('tasks.create');
     Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
@@ -35,6 +36,5 @@ Route::middleware('auth:admin')->group(function () {
 
 });
 Route::get('/', function () {
-    // This route will use the custom middleware
 })->middleware('redirectIfAuthenticated');
 

@@ -29,12 +29,24 @@
             <!-- Navbar -->
             <header class="navbar">
                 <h1>@yield('navbar-title')</h1>
+                    <div class="container d-flex justify-content-between align-items-center">
+                        <h1 class="m-0">@yield('header')</h1>
+
+                        @guest
+                        <a href="{{ route('login') }}" class="btn btn-primary">Login</a>
+                        @else
+                        <form action="{{ url('logout') }}" method="POST" style="display:inline;">
+                            @csrf
+                            <button type="submit" class="btn btn-danger">Logout</button>
+                        </form>
+                        @endguest
+                    </div>
             </header>
 
-            <!-- Page Content -->
             <main>
                 @yield('content')
             </main>
+
         </div>
     </div>
 </body>
