@@ -10,20 +10,21 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v4
 
-            - name: Install PHP latest
+            - name: Install PHP and extensions
               run: |
-                  sudo apt remove php -y
                   sudo apt update
+                  sudo apt install -y software-properties-common
                   sudo add-apt-repository ppa:ondrej/php
                   sudo apt update
-                  sudo apt -y install php
-                  sudo apt update
-                  sudo apt install php-curl php-xml php-mbstring php-mysql -y
+                  sudo apt -y install php php-curl php-xml php-mbstring php-mysql
 
-            - name: Start Mariadb
+            - name: Start MySQL
               run: |
-                  sudo systemctl start mysql.service
-                  mysql -uroot -p -e 'CREATE DATABASE IF NOT EXISTS task-manager;'
+                  sudo service mysql start
+                  sudo mysql -e "CREATE DATABASE IF NOT EXISTS task_manager;"
+                  sudo mysql -e "CREATE USER IF NOT EXISTS 'root'@'localhost' IDENTIFIED BY '';"
+                  sudo mysql -e "GRANT ALL PRIVILEGES ON task_manager.* TO 'root'@'localhost';"
+                  sudo mysql -e "FLUSH PRIVILEGES;"
 
             - name: Install Composer dependencies
               run: composer update
