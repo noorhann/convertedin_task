@@ -16,4 +16,20 @@ class Task extends Model
         'assigned_to_id',
         'assigned_by_id',
     ];
+
+    /**
+     * Get the user that the task is assigned to.
+     */
+    public function assignedUser()
+    {
+        return $this->belongsTo(User::class, 'assigned_to_id');
+    }
+
+    /**
+     * Get the admin who created the task.
+     */
+    public function assignedBy()
+    {
+        return $this->belongsTo(Admin::class, 'assigned_by_id');
+    }
 }
