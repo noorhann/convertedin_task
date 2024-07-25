@@ -16,8 +16,8 @@
             <nav>
                 <ul>
                     <li><a href="{{ route('tasks.create') }}">Create Task</a></li>
-                    <li><a href="">Task List</a></li>
-                    <li><a href="">Statistics</a></li>
+                    <li><a href="{{ route('tasks.index') }}">Task List</a></li>
+                    <li><a href="{{ route('statistics.index') }}">Statistics</a></li>
                 </ul>
             </nav>
         </aside>

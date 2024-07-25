@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\AuthController;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,13 +16,25 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+// Show login form and handle login
+Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('login', [AuthController::class, 'login'])->name('admin.login');
 
-Route::get('/tasks/create', [TaskController::class, 'create'])->name('tasks.create');
-Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
-Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
+// Logout
+Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics.index');
+Route::middleware('auth:admin')->group(function () {
 
+    Route::get('/tasks/create', [TaskController::class, 'create'])->name('tasks.create');
+    Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
+    Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
+
+    Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics.index');
+
+    Route::post('logout', [AuthController::class, 'logout']);
+
+});
 Route::get('/', function () {
     return view('welcome');
 });
+

@@ -21,18 +21,20 @@ class TaskController extends Controller
         $tasks = Task::paginate(10);
         return view('tasks.index', compact('tasks'));
     }
-    
+
     public function create()
     {
-        $admins = $this->userService->getAdmins();
         $users = $this->userService->getNonAdminUsers();
-        return view('tasks.create', compact('admins', 'users'));
+        return view('tasks.create', compact('users'));
     }
 
 
     public function store(StoreTaskRequest $request)
-    {   
-        Task::create($request->validated());
+    {
+        $validated = $request->validated();
+        $validated['assigned_by_id'] = auth()->user()->id; 
+
+        Task::create($validated);
 
         return redirect()->route('tasks.index')->with('success', 'Task created successfully.');
     }

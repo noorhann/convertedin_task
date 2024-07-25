@@ -22,7 +22,6 @@ class StoreTaskRequest extends FormRequest
     public function rules(): array
     {
          return [
-            'assigned_by_id' => 'required|exists:admins,id',
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'assigned_to_id' => 'required|exists:users,id',
