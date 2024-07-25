@@ -5,62 +5,35 @@ namespace App\Http\Controllers;
 use App\Models\Task;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
+use App\Services\UserService;
 
 class TaskController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected $userService;
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
     public function index()
     {
-        //
+        $tasks = Task::paginate(10);
+        return view('tasks.index', compact('tasks'));
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
+    
     public function create()
     {
-        //
+        $admins = $this->userService->getAdmins();
+        $users = $this->userService->getNonAdminUsers();
+        return view('tasks.create', compact('admins', 'users'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
     public function store(StoreTaskRequest $request)
-    {
-        //
-    }
+    {   
+        Task::create($request->validated());
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Task $task)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Task $task)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateTaskRequest $request, Task $task)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Task $task)
-    {
-        //
+        return redirect()->route('tasks.index')->with('success', 'Task created successfully.');
     }
 }
