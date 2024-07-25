@@ -1,4 +1,4 @@
-name: CI
+name: Run Tests
 
 on: [push]
 
@@ -19,28 +19,31 @@ jobs:
 
     - name: Set up database
       run: |
-       sudo apt-get update
+        sudo apt-get update
         sudo apt-get install -y mysql-server
         sudo service mysql start
 
-        # Secure MySQL installation
-        sudo mysql -e "UPDATE mysql.user SET authentication_string=PASSWORD('') WHERE User='root';"
-        sudo mysql -e "FLUSH PRIVILEGES;"
-
-        # Create database and user
-        mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS ${DB_DATABASE};"
-        mysql -u root -p -e "CREATE USER IF NOT EXISTS '${DB_USERNAME}'@'localhost' IDENTIFIED BY '${DB_PASSWORD}';"
-        mysql -u root -p -e "GRANT ALL PRIVILEGES ON ${DB_DATABASE}.* TO '${DB_USERNAME}'@'localhost';"
-        mysql -u root -p -e "FLUSH PRIVILEGES;"
+        # Create database and user with no password
+        mysql -e "CREATE DATABASE IF NOT EXISTS ${DB_DATABASE};"
+        mysql -e "CREATE USER IF NOT EXISTS '${DB_USERNAME}'@'localhost';"
+        mysql -e "GRANT ALL PRIVILEGES ON ${DB_DATABASE}.* TO '${DB_USERNAME}'@'localhost';"
+        mysql -e "FLUSH PRIVILEGES;"
 
     - name: Run migrations
+      env:
+        DB_CONNECTION: mysql
+        DB_HOST: 127.0.0.1
+        DB_PORT: 3306
+        DB_DATABASE: ${{ secrets.DB_DATABASE }}
+        DB_USERNAME: ${{ secrets.DB_USERNAME }}
+        DB_PASSWORD: ''
       run: php artisan migrate --force
 
     - name: Run tests
       env:
-        DB_CONNECTION: ${{ secrets.DB_CONNECTION }}
-        DB_HOST: ${{ secrets.DB_HOST }}
-        DB_PORT: ${{ secrets.DB_PORT }}
+        DB_CONNECTION: mysql
+        DB_HOST: 127.0.0.1
+        DB_PORT: 3306
         DB_DATABASE: ${{ secrets.DB_DATABASE }}
         DB_USERNAME: ${{ secrets.DB_USERNAME }}
         DB_PASSWORD: ''
